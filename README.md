@@ -1,6 +1,7 @@
 ```bash
 #!/bin/bash
-
+echo "How much RAM do you want to use for this container . specify gb in small letters"
+read ram
 # Function to check for command existence
 command_exists() {
   command -v "$1" >/dev/null 2>&1
@@ -69,15 +70,19 @@ else
   echo "Cloudflared is already installed."
 fi
 
-# Pull and run the Docker image for linuxserver.io Firefox
-echo "Pulling LinuxServer Firefox Docker image..."
-docker pull linuxserver/firefox || { echo "Failed to pull Docker image"; exit 1; }
+docker run -d \
+  --name=firefox \
+  --security-opt seccomp=unconfined `#optional` \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Etc/UTC \
+  -e FIREFOX_CLI=https://www.duckduckgo.com/ `#optional` \
+  -p 3000:3000 \
+  -p 3001:3001 \
+  --shm-size="$ram" \
+  --restart unless-stopped \
+  lscr.io/linuxserver/firefox:latest
 
-# Run the Docker container on port 2007
-echo "Running Firefox on port 2007..."
-docker run -d --name=firefox -p 3000:3000 -e PUID=1000 -e PGID=1000 -e TZ=Etc/UTC linuxserver/firefox || { echo "Failed to start Docker container"; exit 1; }
-
-# Run Cloudflared to expose port 2007 publicly
 echo "Exposing port 3000 with Cloudflared..."
 cloudflared tunnel --url http://localhost:3000
 ```
