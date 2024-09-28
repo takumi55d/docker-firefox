@@ -1,7 +1,6 @@
 ```bash
 #!/bin/bash
-echo "How much RAM do you want to use for this container . specify gb in small letters"
-read ram
+
 # Function to check for command existence
 command_exists() {
   command -v "$1" >/dev/null 2>&1
@@ -79,7 +78,7 @@ docker run -d \
   -e FIREFOX_CLI=https://www.duckduckgo.com/ `#optional` \
   -p 3000:3000 \
   -p 3001:3001 \
-  --shm-size="$ram" \
+  --shm-size="1gb" \
   --restart unless-stopped \
   lscr.io/linuxserver/firefox:latest
 
