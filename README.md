@@ -75,18 +75,9 @@ docker pull linuxserver/firefox || { echo "Failed to pull Docker image"; exit 1;
 
 # Run the Docker container on port 2007
 echo "Running Firefox on port 2007..."
-docker run -d --name=firefox -p 2007:3000 -e PUID=1000 -e PGID=1000 -e TZ=Etc/UTC linuxserver/firefox || { echo "Failed to start Docker container"; exit 1; }
+docker run -d --name=firefox -p 3000:3000 -e PUID=1000 -e PGID=1000 -e TZ=Etc/UTC linuxserver/firefox || { echo "Failed to start Docker container"; exit 1; }
 
 # Run Cloudflared to expose port 2007 publicly
-echo "Exposing port 2007 with Cloudflared..."
-CLOUDFLARE_URL=$(cloudflared tunnel --url http://localhost:2007 2>&1 | grep -o 'https://.*' | head -n 1)
-
-# Check if Cloudflared URL was successfully extracted
-if [[ -z "$CLOUDFLARE_URL" ]]; then
-  echo "Failed to retrieve Cloudflared public URL."
-  exit 1
-fi
-
-# Output the Cloudflared public URL
-echo "Setup complete. Access your Firefox browser at: $CLOUDFLARE_URL"
+echo "Exposing port 3000 with Cloudflared..."
+cloudflared tunnel --url http://localhost:3000
 ```
