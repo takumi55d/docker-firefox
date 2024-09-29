@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 # Function to check for command existence
@@ -84,4 +83,3 @@ docker run -d \
 
 echo "Exposing port 3000 with Cloudflared..."
 cloudflared tunnel --url http://localhost:3000
-```
